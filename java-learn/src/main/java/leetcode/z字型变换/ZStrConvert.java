@@ -2,9 +2,17 @@ package leetcode.z字型变换;
 
 public class ZStrConvert {
 
+
+    /**
+     * 打印Z字型
+     * todo 打印存在点问题
+     * @param s
+     * @param numRows
+     * @return
+     */
     public String convert(String s, int numRows) {
-        char[][] res = new char[numRows][numRows];
         int singleLength = 2*numRows-2;
+        char[][] res = new char[numRows][(numRows - 1) * singleLength];
         int iterCount = s.length() / singleLength + 1;
         for(int iter = 0; iter < iterCount; iter++) {
             int index = iter * singleLength;
@@ -34,10 +42,42 @@ public class ZStrConvert {
         return restr;
     }
 
+    /**
+     * 只输出字符串
+     */
+
+    public String convertStr(String s, int numRows) {
+        if (numRows == 1) {
+            return s;
+        }
+        StringBuilder[] stringBuilders = new StringBuilder[numRows];
+        for (int i = 0; i < numRows; i++) {
+            stringBuilders[i] = new StringBuilder();
+        }
+        int currentLineNum = 0;
+        int increaseFlag = 1;
+        for (int i = 0; i < s.length() ; i++) {
+            stringBuilders[currentLineNum].append(s.charAt(i));
+            if (currentLineNum == 0) {
+                increaseFlag = 1;
+            }
+            if (currentLineNum == numRows -1) {
+                increaseFlag = -1;
+            }
+            currentLineNum = currentLineNum + increaseFlag;
+        }
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < numRows; i ++) {
+            res.append(stringBuilders[i]);
+        }
+        return res.toString();
+    }
+
     public static void main(String[] args) {
         ZStrConvert zStrConvert = new ZStrConvert();
         String s = "PAYPALISHIRING";
-        zStrConvert.convert(s, 3);
+        String res = zStrConvert.convert(s, 3);
+        System.out.println(res);
     }
 
 
