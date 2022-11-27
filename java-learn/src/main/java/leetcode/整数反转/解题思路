@@ -1,0 +1,6 @@
+## 解题思路
+* 小于2^31的10位数，首位只能是1或2，反转过来末位是1或2，小于7。如果大于7，输入就溢出了。所以不用考虑末位的7和-8，只要保证其余9位满足条件就行。
+* 判断溢出， 即 
+  * 对于正数：10 * res + currentNum > Interger.Max_IntValue
+  * 对于负数：10 * res - currentNum < Interger.Min_IntValue
+  * 
