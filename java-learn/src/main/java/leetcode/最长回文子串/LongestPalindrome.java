@@ -1,4 +1,4 @@
-package leetcode.回文数组;
+package leetcode.最长回文子串;
 
 /**
  * 最长回文数组
