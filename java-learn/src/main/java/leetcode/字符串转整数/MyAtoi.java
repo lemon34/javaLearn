@@ -2,7 +2,7 @@ package leetcode.字符串转整数;
 
 public class MyAtoi {
 
-    public int myAtoi(String str) {
+    public int myAtoi(String s) {
 //        char[] chars = s.toCharArray();
 //        int postiveFlag = 1;
 //        long res = 0;
@@ -28,21 +28,21 @@ public class MyAtoi {
 //            }
 //        }
 //        return new Long(res).intValue();
-        str = str.trim();
-        if (str.length() == 0) return 0;
-        if (!Character.isDigit(str.charAt(0))
-                && str.charAt(0) != '-' && str.charAt(0) != '+')
+        s = s.trim();
+        if (s.length() == 0) return 0;
+        if (!Character.isDigit(s.charAt(0))
+                && s.charAt(0) != '-' && s.charAt(0) != '+')
             return 0;
         int ans = 0;
-        boolean neg = str.charAt(0) == '-';
-        int i = !Character.isDigit(str.charAt(0)) ? 1 : 0;
-        while (i < str.length() && Character.isDigit(str.charAt(i))) {
+        boolean neg = s.charAt(0) == '-';
+        int i = !Character.isDigit(s.charAt(0)) ? 1 : 0;
+        while (i < s.length() && Character.isDigit(s.charAt(i))) {
             //判断溢出，或者使用long型进行存储
-            int tmp = ((neg ? Integer.MIN_VALUE : Integer.MIN_VALUE + 1) + (str.charAt(i) - '0')) / 10;
+            int tmp = ((neg ? Integer.MIN_VALUE : Integer.MIN_VALUE + 1) + (s.charAt(i) - '0')) / 10;
             if (tmp > ans) {
                 return neg ? Integer.MIN_VALUE : Integer.MAX_VALUE;
             }
-            ans = ans * 10 - (str.charAt(i++) - '0');
+            ans = ans * 10 - (s.charAt(i++) - '0');
         }
         return neg ? ans : -ans;
     }
