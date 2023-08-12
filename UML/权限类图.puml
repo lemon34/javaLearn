@@ -1,0 +1,98 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+package interface {
+    class AuthorizationEventConsumer {
+        + handleAuthorizationEvent()
+    }
+    class AuthorizationController {
+        + assignAuthorization()
+        + modifyAuthorization()
+        + removeAuthorization()
+        + queryUserByBizlineAndRole()
+        + queryAuthorizationDetail()
+        + queryAuthorizationList()
+    }
+}
+package "application" {
+    class AuthorizationQueryApplication {
+        + queryAuthorizationList(AuthorizationQueryBO authorizationQueryBO)
+        + queryAuthorizationDetail()
+        + queryUserByBizlineAndRole()
+    }
+    class AuthorizationCommandApplication {
+        + handleAuthorizationEvent()
+    }
+    interface AuthorizationQueryRepo {
+        + queryResourceIdListByBizlineAndRole(AuthorizationQueryBO authorizationQueryBO)
+        + queryAuthorizationDetail()
+    }
+}
+package domain {
+    class Resource {
+         - String resourceType
+         - String resourceCode
+         - List<Role> roleEntityList
+         - Integer status
+         + List<String> summaryUserId(List<Role> roleList)
+         + Resource modifyAuthorization(Resource resource)
+    }
+    class Role {
+        - String bizLine
+        - String bizLineId
+        - String role
+        - String roleId
+        - List<String> misList
+    }
+    class AuthorizationDomainService {
+        + void assignAuthorizationToUser(Resource resource)
+        + List<String> queryUserByBizlineAndRole()
+    }
+    interface AuthorizationGateway {
+         + List<String> queryAuthByBizLineAndRole(String bizline, String roleId)
+         + List<String> queryUserByBizlineAndRole()
+    }
+    interface KuaidaGateway {
+         + void assignAuthorization(Object resourceCode, List<String> empIdList)
+         + void removeAuthorization(Object resourceCode, List<String> empIdList)
+         + void queryAuthorizationByResourceId(Object resourceId)
+
+    }
+}
+
+package "infrastructure" {
+    class AuthorizationQueryRepoImpl {
+        + queryResourceIdListByBizlineAndRole(AuthorizationQueryBO authorizationQueryBO)
+        + queryAuthorizationDetail()
+    }
+
+    class KuaidaGatewayImpl {
+         + void assignAuthorization(Object resourceCode, List<String> empIdList)
+         + void removeAuthorization(Object resourceCode, List<String> empIdList)
+         + void queryAuthorizationByResourceId(Object resourceId)
+    }
+    class AuthorizationGatewayImpl {
+         + List<String> queryAuthByBizLineAndRole(String bizline, String roleId)
+    }
+}
+
+
+AuthorizationEventConsumer ..> AuthorizationCommandApplication : 依赖
+AuthorizationController ..> AuthorizationCommandApplication: 依赖
+AuthorizationController ..> AuthorizationQueryApplication: 依赖
+AuthorizationCommandApplication ..> AuthorizationQueryRepo: 依赖
+AuthorizationCommandApplication ..> AuthorizationDomainService: 依赖
+AuthorizationCommandApplication ..> Resource: 依赖
+
+AuthorizationQueryApplication ..> AuthorizationDomainService: 依赖
+AuthorizationDomainService ..> KuaidaGateway: 依赖
+AuthorizationDomainService ..> AuthorizationGateway: 依赖
+AuthorizationDomainService ..> Resource: 依赖
+AuthorizationGatewayImpl .up.|> AuthorizationGateway : 实现
+KuaidaGatewayImpl .up.|> KuaidaGateway: 实现
+AuthorizationQueryRepoImpl .up.|> AuthorizationQueryRepo: 实现
+Resource "1" o-right- "n" Role : 组合
+
+
+@enduml

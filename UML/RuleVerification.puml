@@ -1,0 +1,48 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+autonumber
+autoactivate on
+
+WEB -> AuthorizationController : 前端调用开始
+AuthorizationController -> AuthorizationController : 参数校验 + 参数转化
+AuthorizationController --> AuthorizationController : return
+AuthorizationController -> AuthorizationCommandApplication : 删除权限
+AuthorizationCommandApplication -> AuthorizationRepo : 根据授权组id查询已经存在的关系
+AuthorizationRepo --> AuthorizationCommandApplication : return
+
+alt 如果没有建立过关系
+    AuthorizationCommandApplication --> AuthorizationController : return, 提示前端不存在对应的关系，无法删除
+    AuthorizationController --> WEB : return
+
+else 如果已经建立过关系
+    AuthorizationCommandApplication -> AuthorizationCommandApplication
+    AuthorizationCommandApplication -> AuthorizationFactory : 创建聚合
+    AuthorizationFactory --> AuthorizationCommandApplication : return
+    AuthorizationCommandApplication -> AuthorizationRepo : 修改授权关系到数据库，此处需要做增量变更，不做全量覆盖
+    AuthorizationRepo --> AuthorizationCommandApplication : return
+end alt
+AuthorizationCommandApplication -\\ AuthorizationDomainService : 给具体的人员授权
+
+group 异步调用快搭
+    AuthorizationDomainService -> AuthorizationGateway : 基于业务线+角色查询空间站角色人员信息
+    AuthorizationGateway --> AuthorizationDomainService : return
+    AuthorizationDomainService -> Authorization : 汇总并且去重需要授权的人员信息
+    Authorization --> AuthorizationDomainService : return
+    AuthorizationDomainService -> KuaidaGateway : 根据授权组id查询全量数据
+    KuaidaGateway --> AuthorizationDomainService : return
+    AuthorizationDomainService -> KuaidaGateway : 全量删除人员信息
+    KuaidaGateway --> AuthorizationDomainService : return
+    AuthorizationDomainService -> KuaidaGateway : 全量同步给快搭权限组授权人员(用于表单授权)
+    KuaidaGateway --> AuthorizationDomainService : return
+end group
+note left
+    异步进行快搭授权，如果异步失败，
+    需要补偿，按照业务线+角色的维度进行任务补偿
+end note
+AuthorizationDomainService --\\ AuthorizationCommandApplication : return
+
+AuthorizationCommandApplication --> AuthorizationController : return
+AuthorizationController --> WEB : return
+
+@enduml

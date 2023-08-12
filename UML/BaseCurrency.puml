@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:报数规则新增;
+if (三要素为税金类三要素) then (true)
+    : calExchangeRateFlag与surplusAmountFlag 默认为N;
+    stop
+else (false)
+if (相同系统来源+业务类型维度是否存在其他三要素) then (true)
+    if (其他三要素calExchangeRateFlag标识 不一致) then (true)
+        stop
+    endif
+  :当前新增三要素的calExchangeRateFlag标记和同组其他三要素的标记保持一致,surplusAmountFlag默认为N;
+else (false)
+    :当前三要素的calExchangeRateFlag和surplusAmountFlag字段全都设置成N;
+endif
+stop
+
+@enduml
