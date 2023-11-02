@@ -1,0 +1,46 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+: RPC Request;
+note left
+ 参数列表：
+    1、taxRuleCodes：税则编码列表
+    2、dataType：数据类型（用于标识数据是最新的版本还是最新生效的版本，
+            <b>1-表示最新的版本，2-表示最新生效的版本</b>）
+    3、auditStatus：数据状态，（<b>1待维护，2审批中，3已通过，4已驳回,5已撤回</b>）
+end note
+
+: 参数校验;
+note right
+    校验规则：
+     1、taxRuleCodes 的长度不能超过100(已有校验)
+     2、dataType 是否1或者2，不在取值范围内，则提示数据类型有误（新增校验）
+     3、auditStatus <b>为空则表示不控制数据状态，不为空则需要校验值的有效性，如果不在取值范围内，提示数据状态有误
+end note
+
+if (dataType == 1) then (true)
+  :查询最新的版本，即查询frd_tax_rule_main_request 表;
+  note left
+    在原有的基础上面增加业务线信息、是否税会差异、
+        申报规则链接以及税则状态字段
+  end note
+  : 根据税则编码，再去查询frd_tax_rule_detail_request表，获取是否税会差异字段;
+  : 根据税则编码+版本查询frd_rule_audit_detail，获取对应的bpmCode;
+else  (false)
+    if   (dataType == 2) then (true)
+        : 查询最新生效的版本，即查询frd_tax_rule_main_result 表;
+        note right
+            在原有的基础上面增加业务线信息、是否税会差异、
+               申报规则链接以及税则状态字段
+        end note
+        : 根据税则编码，再去查询frd_tax_rule_detail_result表，获取是否税会差异字段;
+        : 根据税则编码+版本查询frd_rule_audit_detail，获取对应的bpmCode;
+    else (false)
+    endif
+endif
+
+: 返回数据;
+stop
+
+@enduml

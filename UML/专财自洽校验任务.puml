@@ -1,0 +1,93 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package server {
+    class ProfessionalFinanceCheckTask {
+        + void generateRelationTransactionRuleList()
+    }
+    class TaxRuleInfo {
+
+    }
+
+    class RuleValidateContext {
+'        用于提前加载中途岛以及空间站的数据
+
+    }
+
+    interface RuleSpcefication {
+        boolean isSatisfiedBy(T sourceCandidate, U targetCandidate, RuleValidateContext ruleValidateContext);
+    }
+
+    class
+}
+
+
+package application {
+    class RelatedTransactionRuleApplication {
+'        创建关联交易规则
+        + void createRelatedTransactionRuleList()
+    }
+    abstract class VoucherRuleProcess {
+        + abstract void paramValid()
+        + abstract VoucherRule constructVourcherRule()
+        + abstract void createThreeElement(ThreeElement threeElement)
+        + abstract void saveVoucherRule(VoucherRule voucherRule)
+        + abstract void associateInfo()
+        + abstract void createBackgroundRule()
+        + abstract void updateThreeElementVersion()
+    }
+    class RelatedTransactionVoucherRule {
+
+    }
+    interface RelatedTransactionGateway {
+            + queryRelatedTransactionSceneBySceneIds()
+    }
+}
+package domain {
+    class VoucherRule {
+        + VoucherRule constructRelatedTransactionVoucherRule()
+        + boolean isNeedCreateRelatedTransactionVoucherRule()
+    }
+    class VoucherRuleDomainService {
+        + void createRelatedTransactionVourcherRuleList()
+    }
+    class EntryRule {
+        + Entry constructRelatedTransactionEntryRule()
+    }
+    class EntryRuleDomainService {
+        + void isNeedCreateRelatedTransactionEntryRule()
+        + void createRelatedTransactionEntryRuleList()
+    }
+    class ThreeElementDomainService {
+'    放在domainService中
+        + createRelatedTransactionRecord()
+        + createRelatedTransactionBusinessType()
+    }
+
+
+
+}
+
+package infrastructure {
+    class RelatedTransactionGatewayImpl {
+        + queryRelatedTransactionSceneBySceneIds()
+    }
+}
+
+top to bottom direction
+
+
+BusinessDataCheckController ..> RelatedTransactionRuleApplication
+RelatedTransactionRuleApplication .right.> VoucherRuleProcess
+VoucherRuleProcess <|-down- RelatedTransactionVoucherRule
+RelatedTransactionVoucherRule .down.> VoucherRule
+RelatedTransactionVoucherRule .down.> VoucherRuleDomainService
+RelatedTransactionVoucherRule .down.> EntryRule
+RelatedTransactionVoucherRule .down.> EntryRuleDomainService
+RelatedTransactionVoucherRule .down.> ThreeElementDomainService
+RelatedTransactionVoucherRule .left.> RelatedTransactionGateway
+RelatedTransactionGateway <|-down- RelatedTransactionGatewayImpl
+
+
+
+@enduml
