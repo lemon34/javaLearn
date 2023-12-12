@@ -1,93 +1,23 @@
 @startuml
-'https://plantuml.com/class-diagram
 
-package server {
-    class ProfessionalFinanceCheckTask {
-        + void generateRelationTransactionRuleList()
-    }
-    class TaxRuleInfo {
+start
 
-    }
-
-    class RuleValidateContext {
-'        用于提前加载中途岛以及空间站的数据
-
-    }
-
-    interface RuleSpcefication {
-        boolean isSatisfiedBy(T sourceCandidate, U targetCandidate, RuleValidateContext ruleValidateContext);
-    }
-
-    class
-}
-
-
-package application {
-    class RelatedTransactionRuleApplication {
-'        创建关联交易规则
-        + void createRelatedTransactionRuleList()
-    }
-    abstract class VoucherRuleProcess {
-        + abstract void paramValid()
-        + abstract VoucherRule constructVourcherRule()
-        + abstract void createThreeElement(ThreeElement threeElement)
-        + abstract void saveVoucherRule(VoucherRule voucherRule)
-        + abstract void associateInfo()
-        + abstract void createBackgroundRule()
-        + abstract void updateThreeElementVersion()
-    }
-    class RelatedTransactionVoucherRule {
-
-    }
-    interface RelatedTransactionGateway {
-            + queryRelatedTransactionSceneBySceneIds()
-    }
-}
-package domain {
-    class VoucherRule {
-        + VoucherRule constructRelatedTransactionVoucherRule()
-        + boolean isNeedCreateRelatedTransactionVoucherRule()
-    }
-    class VoucherRuleDomainService {
-        + void createRelatedTransactionVourcherRuleList()
-    }
-    class EntryRule {
-        + Entry constructRelatedTransactionEntryRule()
-    }
-    class EntryRuleDomainService {
-        + void isNeedCreateRelatedTransactionEntryRule()
-        + void createRelatedTransactionEntryRuleList()
-    }
-    class ThreeElementDomainService {
-'    放在domainService中
-        + createRelatedTransactionRecord()
-        + createRelatedTransactionBusinessType()
-    }
-
-
-
-}
-
-package infrastructure {
-    class RelatedTransactionGatewayImpl {
-        + queryRelatedTransactionSceneBySceneIds()
-    }
-}
-
-top to bottom direction
-
-
-BusinessDataCheckController ..> RelatedTransactionRuleApplication
-RelatedTransactionRuleApplication .right.> VoucherRuleProcess
-VoucherRuleProcess <|-down- RelatedTransactionVoucherRule
-RelatedTransactionVoucherRule .down.> VoucherRule
-RelatedTransactionVoucherRule .down.> VoucherRuleDomainService
-RelatedTransactionVoucherRule .down.> EntryRule
-RelatedTransactionVoucherRule .down.> EntryRuleDomainService
-RelatedTransactionVoucherRule .down.> ThreeElementDomainService
-RelatedTransactionVoucherRule .left.> RelatedTransactionGateway
-RelatedTransactionGateway <|-down- RelatedTransactionGatewayImpl
-
+:财务方案概览 状态;
+:页面添加关注人;
+if(财务方案概览状态) then (未推送)
+    if (操作类型) then (仅添加关注人)
+    else (添加并推送)
+        : 获取全部的关注人;
+        : 针对全部的关注人，推送大象消息;
+    endif
+else (已推送)
+    if (操作类型) then (添加并推送)
+       : 针对前端传入的新增人员，推送大象消息;
+    endif
+endif
+: 将前端添加的关注人添加到数据库表;
+: 返回前端;
+end
 
 
 @enduml
